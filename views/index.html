@@ -15,41 +15,44 @@
               <table class="table table-hover">
                 <thead>
                 <tr>
-                  <th class="text-center">ID</th>
-                  <th class="text-center">Detail</th>
+                  <th class="text-center">ID</th>          
                   <th class="text-center">PIC</th>
+                  <th class="text-center">Detail</th>
                   <th class="text-center">Deadline</th>
                   <th class="text-center">Status</th>             
                   <th class="text-center" colspan = 2>Action</th>             
                 </tr>
                  </thead>
                  <tbody>
-              {{ range . }}
+                {{ range . }}
                 <tr>
-                  <td class="text-center col-sm-1">{{ .Id }}</td>
+                  <td class="text-center col-sm-1">{{ .Id }}</td>                  
+                  <td class="text-center col-sm-3">{{ .Pic }} </td>
                   <td class="text-center col-sm-4"> {{ .Detail }} </td>
-                  <td class="text-center col-sm-2">{{ .Pic }} </td> 
                   <td class="text-center col-sm-2">{{ .Deadline }} </td> 
-                  <td class="text-center col-sm-1">
+                  <td class="text-center col-sm-2">
                     {{if .Isdone}}
                       Done
                     {{else}}
                       In Progress
                     {{end}}
-                  </td>             
-               
-                    {{if .Isdone}}                    
+                  </td>                            
+                    {{if .Isdone}}
+                    <td class="col-sm-1 text-center">                                            
+                      <a class="btn btn-info" href="/edit?id={{ .Id }}">Edit</a>
+                      
+                    </td>
+                    <td class="col-sm-1 text-center"> 
+                      <label class="btn btn-success">Done</label>
+                    </td>
                     {{else}}
-                    <td class="text-center col-sm-1">                                            
+                    <td class="col-sm-1 text-center">                                            
                       <a class="btn btn-info" href="/edit?id={{ .Id }}">Edit</a>                      
                     </td>
-                    <td class="text-center col-sm-1">
+                    <td class="col-sm-1 text-center">
                       <a class="btn btn-info" href="/done?id={{ .Id }}">Mark As Done</a>
                     </td>
                     {{end}}  
-                  
-                  
-                  
                 </tr>
               {{ end }}
                  </tbody>

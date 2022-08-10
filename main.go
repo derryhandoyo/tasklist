@@ -103,12 +103,39 @@ func handlerInsert(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
+func handlerEdit(w http.ResponseWriter, r *http.Request) {
+	db := dbConnect()
+	nId := r.URL.Query().Get("id")
+	selDB, err := db.Query("SELECT * FROM tasks WHERE id=?", nId)
+	if err != nil {
+		panic(err.Error())
+	}
+	task := Task{}
+	for selDB.Next() {
+		var id int
+		var detail, pic, deadline string
+		var isdone bool
+		err = selDB.Scan(&id, &detail, &pic, &deadline, &isdone)
+		if err != nil {
+			panic(err.Error())
+		}
+		task.Id = id
+		task.Detail = detail
+		task.Pic = pic
+		task.Deadline = deadline
+		task.Isdone = isdone
+	}
+	tmpl.ExecuteTemplate(w, "edit", task)
+	defer db.Close()
+}
+
 func main() {
 
 	http.HandleFunc("/", handlerIndex)
 	http.HandleFunc("/index", handlerIndex)
 	http.HandleFunc("/new", handlerNew)
 	http.HandleFunc("/insert", handlerInsert)
+	http.HandleFunc("/edit", handlerEdit)
 
 	http.Handle("/static/",
 		http.StripPrefix("/static/",
