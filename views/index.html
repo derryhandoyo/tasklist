@@ -50,7 +50,11 @@
                       <a class="btn btn-info" href="/edit?id={{ .Id }}">Edit</a>                      
                     </td>
                     <td class="col-sm-1 text-center">
-                      <a class="btn btn-info" href="/done?id={{ .Id }}">Mark As Done</a>
+                      <form method="POST" action="done">
+                        <input type="hidden" name="id" value="{{ .Id }}" />    
+                        <input type="submit" value="Mark as Done" class="btn btn-info"/>
+                      </form>
+                      <!-- <a class="btn btn-info" href="/done?id={{ .Id }}">Mark As Done</a> -->
                     </td>
                     {{end}}  
                 </tr>

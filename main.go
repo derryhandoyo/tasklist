@@ -129,6 +129,41 @@ func handlerEdit(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+func handlerUpdate(w http.ResponseWriter, r *http.Request) {
+	db := dbConnect()
+	if r.Method == "POST" {
+		detail := r.FormValue("detail")
+		pic := r.FormValue("pic")
+		deadline := r.FormValue("deadline")
+		isdone := r.FormValue("is_done")
+		id := r.FormValue("id")
+		fmt.Printf(isdone)
+		insForm, err := db.Prepare("UPDATE Tasks SET detail=?, pic=?, deadline=?, is_done=? WHERE id=?")
+		if err != nil {
+			panic(err.Error())
+		}
+		insForm.Exec(detail, pic, deadline, isdone, id)
+	}
+	defer db.Close()
+	http.Redirect(w, r, "/", 301)
+}
+
+func handlerDone(w http.ResponseWriter, r *http.Request) {
+	db := dbConnect()
+	if r.Method == "POST" {
+		isdone := 1
+		id := r.FormValue("id")
+		insForm, err := db.Prepare("UPDATE Tasks SET is_done=? WHERE id=?")
+		if err != nil {
+			panic(err.Error())
+		}
+		fmt.Println(isdone, id)
+		insForm.Exec(isdone, id)
+	}
+	defer db.Close()
+	http.Redirect(w, r, "/", 301)
+}
+
 func main() {
 
 	http.HandleFunc("/", handlerIndex)
@@ -136,6 +171,8 @@ func main() {
 	http.HandleFunc("/new", handlerNew)
 	http.HandleFunc("/insert", handlerInsert)
 	http.HandleFunc("/edit", handlerEdit)
+	http.HandleFunc("/update", handlerUpdate)
+	http.HandleFunc("/done", handlerDone)
 
 	http.Handle("/static/",
 		http.StripPrefix("/static/",
