@@ -72,23 +72,43 @@ func handlerIndex(w http.ResponseWriter, r *http.Request) {
 		tasks = append(tasks, task)
 
 	}
-	err = tmpl.ExecuteTemplate(w, "index.html", tasks)
+	err = tmpl.ExecuteTemplate(w, "index", tasks)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	defer db.Close()
 }
 
-func handlerHello(w http.ResponseWriter, r *http.Request) {
-	var message = "Hello world!"
-	w.Write([]byte(message))
+func handlerNew(w http.ResponseWriter, r *http.Request) {
+	err = tmpl.ExecuteTemplate(w, "new", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func handlerInsert(w http.ResponseWriter, r *http.Request) {
+	db := dbConnect()
+	if r.Method == "POST" {
+		detail := r.FormValue("detail")
+		pic := r.FormValue("pic")
+		deadline := r.FormValue("deadline")
+		isdone := r.FormValue("is_done")
+		insForm, err := db.Prepare("INSERT INTO tasks(detail, pic, deadline, is_done) VALUES(?,?,?,?)")
+		if err != nil {
+			panic(err.Error())
+		}
+		insForm.Exec(detail, pic, deadline, isdone)
+	}
+	defer db.Close()
+	http.Redirect(w, r, "/", 301)
 }
 
 func main() {
 
 	http.HandleFunc("/", handlerIndex)
 	http.HandleFunc("/index", handlerIndex)
-	http.HandleFunc("/hello", handlerHello)
+	http.HandleFunc("/new", handlerNew)
+	http.HandleFunc("/insert", handlerInsert)
 
 	http.Handle("/static/",
 		http.StripPrefix("/static/",

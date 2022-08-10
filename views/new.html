@@ -1,0 +1,13 @@
+{{define "new"}}
+{{ template "header" }}
+
+<h2>Create New Task</h2>  
+<form method="POST" action="insert">
+  <label> Task Detail </label><input type="text" name="detail" required/><br />
+  <label> Name </label><input type="text" name="pic" required/><br />
+  <label> Deadline </label><input type="date" name="deadline" required/><br />
+  <input type="hidden" name="is_done" value="0">
+  <input type="submit" value="Save Task" />
+</form>
+{{ template "footer" }}
+{{end}}
